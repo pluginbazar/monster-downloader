@@ -50,7 +50,6 @@
         if ('themes.php' !== getCurrentPage()) {
             return;
         }
-
         setTimeout(function () {
 
             let themesAll = $('.themes'),
@@ -65,6 +64,5 @@
             });
         }, 50);
     });
-
 
 })(jQuery, window, document, wpdp);

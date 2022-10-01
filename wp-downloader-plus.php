@@ -31,19 +31,27 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		 * WPDP_Main constructor.
 		 */
 		function __construct() {
-
+			$this->include_files();
 			self::$_script_version = defined( 'WP_DEBUG' ) && WP_DEBUG ? current_time( 'U' ) : WPDB_PLUGIN_VERSION;
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 			add_filter( 'plugin_action_links', array( $this, 'add_download_btn_to_plugins' ), 10, 4 );
 			add_action( 'admin_init', array( $this, 'download_object' ) );
+			register_activation_hook( WPDB_PLUGIN_FILE, array( $this, 'create_data_table' ) );
+			add_action( 'admin_menu', array( $this, 'downloader_data_table' ) );
 		}
 
+		/**
+		 * @return void
+		 */
+		function include_files() {
+			require_once WPDB_PLUGIN_DIR . 'wp-list-table.php';
+		}
 
 		/**
 		 * Handle downloading the object
 		 */
-		function download_object() {
+		public function download_object() {
 
 			if ( ! isset( $_GET['wpdp'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'wpdp-download' ) ) {
 				return;
@@ -96,6 +104,16 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			readfile( $tmpFile );
 			unlink( $tmpFile );
 
+			global $wpdb;
+			$wpdb->insert( 'wp_downloader',
+				array(
+					'object_name'   => $object,
+					'object_type'   => ucfirst( $context ),
+					'downloaded_by' => get_current_user_id(),
+					'datetime'      => current_time( 'mysql' ),
+				)
+			);
+
 			exit;
 		}
 
@@ -132,13 +150,12 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		 *
 		 * @return mixed|void
 		 */
-		function get_object_download_link( $download_object = '', $object_type = 'plugin' ) {
-
+		public function get_object_download_link( $download_object = '', $object_type = 'plugin' ) {
 			$download_object = empty( $download_object ) ? 'object_name' : $download_object;
 			$download_query  = build_query( array( 'wpdp' => $object_type, 'object' => $download_object ) );
 			$download_link   = wp_nonce_url( admin_url( '?' . $download_query ), 'wpdp-download' );
 
-			return apply_filters( 'WPDP_Main/Filters/get_object_download_link', $download_link, $download_object, $object_type );
+			return apply_filters( 'WPDP/Filters/get_object_download_link', $download_link, $download_object, $object_type );
 		}
 
 		/**
@@ -152,8 +169,58 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 				'themeDownloadText' => esc_html__( 'Download' ),
 				'themeDownloadLink' => $this->get_object_download_link( '', 'theme' ),
 			) );
+			wp_enqueue_style( 'downloader-plus-admin', WPDB_PLUGIN_URL . 'assets/admin/css/style.css' );
+
 		}
 
+		/**
+		 * Create table on activation hook.
+		 *
+		 * @return void
+		 */
+		function create_data_table() {
+
+			$table_name = "wp_downloader";
+
+			$sql = "CREATE TABLE $table_name (
+			id int(100) NOT NULL AUTO_INCREMENT,
+			object_name VARCHAR(255) NOT NULL,
+			object_type VARCHAR(255) NOT NULL,
+			downloaded_by VARCHAR(100) NOT NULL,
+			datetime DATETIME NOT NULL,
+			 PRIMARY KEY (id)
+		);";
+
+			if ( ! function_exists( 'maybe_create_table' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			}
+
+			maybe_create_table( $table_name, $sql );
+		}
+
+		/**
+		 * @return void
+		 */
+		function downloader_data_table() {
+			add_submenu_page( 'tools.php', 'download_list', 'WP Downloader Plus', 'manage_options', 'wp_downloader_list', array( $this, 'all_download_list' ), 4 );
+		}
+
+		/**
+		 * @return void
+		 */
+		function all_download_list() {
+
+			$report_table = new WPDP_Reports_table();
+
+			ob_start();
+
+			printf( '<h2>%s</h2>', esc_html__( 'WP Downloader Plus - Reports', 'wp-downloader-plus' ) );
+			printf( '<p>%s</p>', esc_html__( 'Complete download reports.', 'wp-downloader-plus' ) );
+			$report_table->prepare_items();
+			$report_table->display();
+
+			printf( '<div class="wrap wpdp-table-colum">%s</div>', ob_get_clean() );
+		}
 
 		/**
 		 * @return WPDP_Main|null
