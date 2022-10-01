@@ -108,7 +108,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			$wpdb->insert( 'wp_downloader',
 				array(
 					'object_name'   => $object,
-					'object_type'   => ucfirst( $context ),
+					'object_type'   => $context ,
 					'downloaded_by' => get_current_user_id(),
 					'datetime'      => current_time( 'mysql' ),
 				)
