@@ -90,10 +90,9 @@ class WPDP_Reports_table extends WP_List_Table {
 		printf( '<a href="#"><strong>%s</strong></a>', $object_name );
 		echo '<div class="row-actions visible"><span class="deactivate"><a href="plugins.php?action=deactivate&amp;plugin=wp-downloader-plus%2Fwp-downloader-plus.php&amp;plugin_status=search&amp;paged=1&amp;s=WP+Downloader+Plus&amp;_wpnonce=2cfa02e958" id="deactivate-wp-downloader-plus" aria-label="Deactivate WP Downloader Plus">Deactivate</a> | </span><span class="wpdp-download"><a href="http://wp-downloader-plus.local/wp-admin/?wpdp=plugin&amp;object=wp-downloader-plus%2Fwp-downloader-plus.php&amp;_wpnonce=a1ca4f9fce">Download</a></span></div>';
 	}
-
 	function column_object_type( $item ) {
-		$object_type = isset( $item['object_type'] ) ? $item['object_type'] : '';
-		$object_type = ucfirst( $object_type );
+		$object = isset( $item['object_type'] ) ? $item['object_type'] : '';
+		$object_type = ucfirst( $object );
 		printf( '<div><strong>%s</strong></div>', $object_type );
 	}
 
