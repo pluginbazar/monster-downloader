@@ -14,7 +14,7 @@ class WPDP_Reports_table extends WP_List_Table {
 	public function table_data() {
 		global $wpdb;
 
-		return $wpdb->get_results( "SELECT * FROM `wp_downloader`", ARRAY_A );
+		return $wpdb->get_results( "SELECT * FROM " . WPDB_TABLE_REPORTS, ARRAY_A );
 	}
 
 	private $pagination;
@@ -84,14 +84,16 @@ class WPDP_Reports_table extends WP_List_Table {
 	 */
 	function column_object_name( $item ) {
 
-		$object_name = isset( $item['object_name'] ) ? $item['object_name'] : '';
-		$object_name = ucwords( str_replace( array( '-', '_' ), ' ', $object_name ) );
+		$object_name   = isset( $item['object_name'] ) ? $item['object_name'] : '';
+		$object_name   = ucwords( str_replace( array( '-', '_' ), ' ', $object_name ) );
+		$row_actions[] = sprintf( '<span class="wpdp-download"><a href="%s">%s</a></span>', '', esc_html__( 'Download' ) );
 
 		printf( '<a href="#"><strong>%s</strong></a>', $object_name );
-		echo '<div class="row-actions visible"><span class="deactivate"><a href="plugins.php?action=deactivate&amp;plugin=wp-downloader-plus%2Fwp-downloader-plus.php&amp;plugin_status=search&amp;paged=1&amp;s=WP+Downloader+Plus&amp;_wpnonce=2cfa02e958" id="deactivate-wp-downloader-plus" aria-label="Deactivate WP Downloader Plus">Deactivate</a> | </span><span class="wpdp-download"><a href="http://wp-downloader-plus.local/wp-admin/?wpdp=plugin&amp;object=wp-downloader-plus%2Fwp-downloader-plus.php&amp;_wpnonce=a1ca4f9fce">Download</a></span></div>';
+		printf( '<div class="row-actions visible">%s</div>', implode( ' | ', $row_actions ) );
 	}
+
 	function column_object_type( $item ) {
-		$object = isset( $item['object_type'] ) ? $item['object_type'] : '';
+		$object      = isset( $item['object_type'] ) ? $item['object_type'] : '';
 		$object_type = ucfirst( $object );
 		printf( '<div><strong>%s</strong></div>', $object_type );
 	}
@@ -104,9 +106,9 @@ class WPDP_Reports_table extends WP_List_Table {
 	function column_downloaded_by( $item ) {
 		$user_id       = isset( $item['downloaded_by'] ) ? $item['downloaded_by'] : '';
 		$downloaded_by = get_user_by( 'id', $user_id );
+
 		printf( '<div><a href="#"><strong>%s</strong></a></div>', $downloaded_by->display_name );
 		printf( '<div><a href="#"><strong>%s</strong></a></div>', $downloaded_by->user_email );
-
 	}
 
 	/**
