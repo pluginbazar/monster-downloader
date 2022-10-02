@@ -1,5 +1,7 @@
 <?php
 
+use Pluginbazar\Utils;
+
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -84,7 +86,7 @@ class WPDP_Reports_table extends WP_List_Table {
 	 */
 	function column_object_name( $item ) {
 
-		$object_name   = isset( $item['object_name'] ) ? $item['object_name'] : '';
+		$object_name   = Utils::get_args_option( 'object_name', $item );
 		$object_name   = ucwords( str_replace( array( '-', '_' ), ' ', $object_name ) );
 		$row_actions[] = sprintf( '<span class="wpdp-download"><a href="%s">%s</a></span>', '', esc_html__( 'Download' ) );
 

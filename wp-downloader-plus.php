@@ -241,3 +241,26 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 }
 
 WPDP_Main::instance();
+
+function pb_sdk_init_wp_downloader_plus() {
+
+	if ( ! function_exists( 'get_plugins' ) ) {
+		include_once ABSPATH . '/wp-admin/includes/plugin.php';
+	}
+
+	if ( ! class_exists( 'Pluginbazar\Client' ) ) {
+		require_once( plugin_dir_path( __FILE__ ) . 'includes/sdk/classes/class-client.php' );
+	}
+
+	global $wpdp_sdk;
+
+	$wpdp_sdk = new Pluginbazar\Client( esc_html( 'WP Downloader Plus' ), 'wp-poll', 0, __FILE__ );
+}
+
+/**
+ * @global \Pluginbazar\Client $wpdp_sdk
+ */
+global $wpdp_sdk;
+
+pb_sdk_init_wp_downloader_plus();
+
