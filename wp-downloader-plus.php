@@ -254,7 +254,7 @@ function pb_sdk_init_wp_downloader_plus() {
 
 	global $wpdp_sdk;
 
-	$wpdp_sdk = new Pluginbazar\Client( esc_html( 'WP Downloader Plus' ), 'wp-poll', 0, __FILE__ );
+	$wpdp_sdk = new Pluginbazar\Client( esc_html( 'WP Downloader Plus' ), 'wp-downloader-plus', 0, __FILE__ );
 }
 
 /**
