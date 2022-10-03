@@ -199,7 +199,13 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 
 			printf( '<h2>%s</h2>', esc_html__( 'WP Downloader Plus - Reports', 'wp-downloader-plus' ) );
 			printf( '<p>%s</p>', esc_html__( 'Complete download reports.', 'wp-downloader-plus' ) );
-			$report_table->prepare_items();
+			$report_table->prepare_items(); ?>
+
+            <form action="" method="post">
+                <input type="hidden" name="page" value="wpdp_list_table"/>
+				<?php $report_table->search_box( 'search', 'search_id' ); ?>
+            </form> <?php
+
 			$report_table->display();
 
 			printf( '<div class="wrap wpdp-table-colum">%s</div>', ob_get_clean() );
@@ -216,13 +222,13 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			}
 
 			$sql_create_table = "CREATE TABLE " . WPDB_TABLE_REPORTS . " (
-				id int(100) NOT NULL AUTO_INCREMENT,
-				object_name VARCHAR(255) NOT NULL,
-				object_type VARCHAR(255) NOT NULL,
-				downloaded_by VARCHAR(100) NOT NULL,
-				datetime DATETIME NOT NULL,
-				 PRIMARY KEY (id)
-			);";
+                            id int(100) NOT NULL AUTO_INCREMENT,
+                            object_name VARCHAR(255) NOT NULL,
+                            object_type VARCHAR(255) NOT NULL,
+                            downloaded_by VARCHAR(100) NOT NULL,
+                            datetime DATETIME NOT NULL,
+                            PRIMARY KEY (id)
+                            );";
 
 			maybe_create_table( WPDB_TABLE_REPORTS, $sql_create_table );
 		}

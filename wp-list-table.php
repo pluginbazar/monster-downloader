@@ -8,16 +8,30 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class WPDP_Reports_table extends WP_List_Table {
 
-	/**
-	 * @return array[]|void
-	 */
-	public function table_data() {
-		global $wpdb;
+	private $users_data;
 
-		return $wpdb->get_results( "SELECT * FROM " . WPDB_TABLE_REPORTS, ARRAY_A );
+	private function get_users_data( $search = "" ) {
+		global $wpdb;
+		$filter = $_POST['filter-object-type'];
+		if ( $filter !== 'all' ) {
+			return $wpdb->get_results(
+				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type Like '%{$filter}%' ",
+				ARRAY_A
+			);
+		}
+		if ( ! empty( $search ) ) {
+			return $wpdb->get_results(
+				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE id Like '%{$search}%' OR object_name Like '%{$search}%' OR object_type Like '%{$search}%' OR datetime Like '%{$search}%'",
+				ARRAY_A
+			);
+		} else {
+			return $wpdb->get_results(
+				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS,
+				ARRAY_A
+			);
+		}
 	}
 
-	private $pagination;
 
 	/**
 	 * @return array
@@ -40,21 +54,26 @@ class WPDP_Reports_table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
+		if ( isset( $_POST['page'] ) && isset( $_POST['s'] ) ) {
+			$this->users_data = $this->get_users_data( $_POST['s'] );
+		} else {
+			$this->users_data = $this->get_users_data();
+		}
+
 		$columns = $this->get_columns();
 
 		$per_page         = 20;
 		$current_page     = $this->get_pagenum();
-		$this->pagination = $this->table_data();
-		$count            = count( $this->pagination );
-		$this->pagination = array_slice( $this->pagination, ( ( $current_page - 1 ) * $per_page ), $per_page );
+		$this->users_data = $this->users_data;
+		$count            = count( $this->users_data );
+		$this->pagination = array_slice( $this->users_data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
 		$this->set_pagination_args( array(
 			'total_items' => $count,
 			'per_page'    => $per_page,
 		) );
 		$this->_column_headers = array( $columns );
-		$this->items           = $this->table_data();
-		$this->items           = $this->pagination;
+		$this->items           = $this->users_data;
 	}
 
 	/**
@@ -86,7 +105,7 @@ class WPDP_Reports_table extends WP_List_Table {
 
 		$object_name   = isset( $item['object_name'] ) ? $item['object_name'] : '';
 		$object_name   = ucwords( str_replace( array( '-', '_' ), ' ', $object_name ) );
-		$row_actions[] = sprintf( '<span class="wpdp-download"><a href="%s">%s</a></span>', '', esc_html__( 'Download' ) );
+		$row_actions[] = sprintf( '<span class="wpdp - download"><a href=" % s">%s</a></span>', '', esc_html__( 'Download' ) );
 
 		printf( '<a href="#"><strong>%s</strong></a>', $object_name );
 		printf( '<div class="row-actions visible">%s</div>', implode( ' | ', $row_actions ) );
@@ -124,5 +143,21 @@ class WPDP_Reports_table extends WP_List_Table {
 		printf( '<div class="wpdp_download_time">%s</div>', $time );
 	}
 
+	function extra_tablenav( $which ) {
+		if ( $which == "top" ) {
+			?>
+            <div class="alignleft actions bulkactions">
+                <form action="" method="post">
+                    <select name="filter-object-type">
+                        <option value="all">All</option>
+                        <option value="plugin">Plugin</option>
+                        <option value="theme">Theme</option>
+                    </select>
+                    <button class="button" type="submit">Filter</button>
+                </form>
+            </div>
+			<?php
+		}
+	}
 }
 
