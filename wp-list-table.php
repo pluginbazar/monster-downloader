@@ -15,15 +15,14 @@ class WPDP_Reports_table extends WP_List_Table {
 	private function get_users_data( $search = "" ) {
 		global $wpdb;
 		$filter = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
-		if ( $filter !== 'all' ) {
-			return $wpdb->get_results(
-				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type Like '%{$filter}%' ",
-				ARRAY_A
-			);
-		}
 		if ( ! empty( $search ) ) {
 			return $wpdb->get_results(
 				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE id Like '%{$search}%' OR object_name Like '%{$search}%' OR object_type Like '%{$search}%' OR datetime Like '%{$search}%'",
+				ARRAY_A
+			);
+		} elseif ( $filter !== 'all' ) {
+			return $wpdb->get_results(
+				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type Like '%{$filter}%' ",
 				ARRAY_A
 			);
 		} else {
