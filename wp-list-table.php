@@ -14,7 +14,7 @@ class WPDP_Reports_table extends WP_List_Table {
 
 	private function get_users_data( $search = "" ) {
 		global $wpdb;
-		$filter = $_POST['filter-object-type'];
+		$filter = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
 		if ( $filter !== 'all' ) {
 			return $wpdb->get_results(
 				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type Like '%{$filter}%' ",
