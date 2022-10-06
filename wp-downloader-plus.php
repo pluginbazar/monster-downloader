@@ -43,8 +43,6 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			add_filter( 'plugin_action_links', array( $this, 'add_download_btn_to_plugins' ), 10, 4 );
 			add_action( 'admin_init', array( $this, 'download_object' ) );
 			add_action( 'admin_menu', array( $this, 'downloader_data_table' ) );
-
-			register_activation_hook( __FILE__, array( $this, 'create_data_table' ) );
 		}
 
 		/**
@@ -185,7 +183,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		 * @return void
 		 */
 		function downloader_data_table() {
-			add_submenu_page( 'tools.php', 'download_list', 'WP Downloader Plus', 'manage_options', 'wp_downloader_list', array( $this, 'all_download_list' ), 4 );
+			add_submenu_page( 'tools.php', 'WP Downloader Plus', 'WP Downloader Plus', 'manage_options', 'wp-downloader-reports', array( $this, 'all_download_list' ), 4 );
 		}
 
 		/**
