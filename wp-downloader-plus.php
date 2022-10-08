@@ -5,7 +5,7 @@
 	Description: This plugin for download WordPress plugin and theme.
 	Version: 1.0.0
 	Author: Pluginbazar
-	Text Domain: woc-order-alert
+	Text Domain: wp-downloader-plus
 	Author URI: https://pluginbazar.com/
 	License: GPLv2 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -142,6 +142,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			$what = ( 'mustuse' === $context ) ? 'muplugin' : 'plugin';
 
 			$links['wpdp-download'] = sprintf( '<a href="%s">%s</a>', $this->get_object_download_link( $file, $what ), esc_html__( 'Download' ) );
+			$links['wpdp-reports']  = sprintf( '<a href="tools.php?page=wp-downloader-reports">%s</a>', esc_html__( 'Reports' ) );
 
 			return $links;
 		}
@@ -199,11 +200,10 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			printf( '<p>%s</p>', esc_html__( 'Complete download reports.', 'wp-downloader-plus' ) );
 			$report_table->prepare_items(); ?>
 
-            <form action="" method="post">
-                <input type="hidden" name="page" value="wpdp_list_table"/>
-				<?php $report_table->search_box( 'search', 'search_id' ); ?>
+            <form action="" method="get">
+                <input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>"/>
+				<?php $report_table->search_box( __('search'), 'search_id' ); ?>
             </form> <?php
-
 			$report_table->display();
 
 			printf( '<div class="wrap wpdp-table-colum">%s</div>', ob_get_clean() );

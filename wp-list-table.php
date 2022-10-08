@@ -15,7 +15,7 @@ class WPDP_Reports_table extends WP_List_Table {
 	private function get_users_data( $search = "" ) {
 		global $wpdb;
 		$filter = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
-		if ( ! empty( $search ) ) {
+		if ( ! empty( $search )) {
 			return $wpdb->get_results(
 				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE id Like '%{$search}%' OR object_name Like '%{$search}%' OR object_type Like '%{$search}%' OR datetime Like '%{$search}%'",
 				ARRAY_A
@@ -55,8 +55,8 @@ class WPDP_Reports_table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
-		if ( isset( $_POST['page'] ) && isset( $_POST['s'] ) ) {
-			$this->users_data = $this->get_users_data( $_POST['s'] );
+		if ( isset( $_REQUEST['page'] ) && isset( $_REQUEST['s'] ) ) {
+			$this->users_data = $this->get_users_data( $_REQUEST['s'] );
 		} else {
 			$this->users_data = $this->get_users_data();
 		}
@@ -65,9 +65,8 @@ class WPDP_Reports_table extends WP_List_Table {
 
 		$per_page         = 20;
 		$current_page     = $this->get_pagenum();
-		$this->users_data = $this->users_data;
 		$count            = count( $this->users_data );
-		$this->pagination = array_slice( $this->users_data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+		$this->users_data = array_slice( $this->users_data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
 		$this->set_pagination_args( array(
 			'total_items' => $count,
@@ -139,22 +138,24 @@ class WPDP_Reports_table extends WP_List_Table {
 	function column_datetime( $time ) {
 		$time     = isset( $time['datetime'] ) ? $time['datetime'] : '';
 		$datetime = strtotime( $time );
+		$time = date('jS M Y - h:i:s a', $datetime);
 		$datetime = esc_html( human_time_diff( $datetime, current_time( 'U' ) ) ) . ' ago';
 		printf( '<div class="wpdp_time_diff">%s</div>', $datetime );
-		printf( '<div class="wpdp_download_time">%s</div>', $time );
+		printf( '<div class="wpdp_download_time">%s</div>',$time );
 	}
 
 	function extra_tablenav( $which ) {
 		if ( $which == "top" ) {
+			$value = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
 			?>
-            <div class="alignleft actions bulkactions">
+            <div class="alignleft ">
                 <form action="" method="post">
                     <select name="filter-object-type">
-                        <option value="all">All</option>
-                        <option value="plugin">Plugin</option>
-                        <option value="theme">Theme</option>
+                        <option value="all" <?php if($value == 'all'){ echo 'selected'; }?>>All</option>
+                        <option value="plugin" <?php if($value == 'plugin'){ echo 'selected'; } ?>><?php echo esc_html__('Plugin','wp-downloader-plus'); ?></option>
+                        <option value="theme" <?php if($value == 'theme'){ echo 'selected'; } ?>><?php echo esc_html__('Theme','wp-downloader-plus'); ?></option>
                     </select>
-                    <button class="button" type="submit">Filter</button>
+                    <button class="button" type="submit"><?php echo esc_html__('Filter'); ?></button>
                 </form>
             </div>
 			<?php
