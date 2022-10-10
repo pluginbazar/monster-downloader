@@ -109,7 +109,7 @@ class WPDP_Reports_table extends WP_List_Table {
 
 		$object_name   = Utils::get_args_option( 'object_name', $item );
 		$object_name   = ucwords( str_replace( array( '-', '_' ), ' ', $object_name ) );
-		$row_actions[] = sprintf( '<span class="wpdp - download"><a href=" % s">%s</a></span>', '', esc_html__( 'Download' ) );
+		$row_actions[] = sprintf( '<span class="wpdp - download"><a href=" % s">%s</a></span>', '', esc_html__( 'Download', 'wp-downloader-plus' ) );
 
 		printf( '<a href="#"><strong>%s</strong></a>', $object_name );
 		printf( '<div class="row-actions visible">%s</div>', implode( ' | ', $row_actions ) );
@@ -152,8 +152,8 @@ class WPDP_Reports_table extends WP_List_Table {
 
 		$time     = Utils::get_args_option( 'datetime', $item );
 		$datetime = strtotime( $time );
-		$time     = date( 'jS M y h:i a', $datetime );
-		$datetime = human_time_diff( $datetime, current_time( 'U' ) ) . esc_html__( ' ago', 'wp-downloader-plus' );
+		$time     = date( 'jS M, y - h:i a', $datetime );
+		$datetime = human_time_diff( $datetime, time() ) . esc_html__( ' ago', 'wp-downloader-plus' );
 		printf( '<div class="wpdp_time_diff">%s</div>', $datetime );
 		printf( '<div class="wpdp_download_time">%s</div>', $time );
 	}
@@ -179,11 +179,10 @@ class WPDP_Reports_table extends WP_List_Table {
                         <option <?php selected( $filter_type, 'theme' ); ?> value="theme"><?php esc_html_e( 'Theme', 'wp-downloader-plus' ); ?></option>
                     </select>
                     <input type="hidden" name="page" value="<?php echo esc_attr( $current_page ); ?>">
-                    <button class="button" type="submit"><?php echo esc_html__( 'Filter' ); ?></button>
+                    <button class="button" type="submit"><?php echo esc_html__( 'Filter', 'wp-downloader-plus' ); ?></button>
                 </form>
             </div>
 			<?php
 		}
 	}
 }
-

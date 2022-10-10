@@ -144,8 +144,8 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 
 			foreach ( $links as $link_id => $link ) {
 
-				if ( 'deactivate' == $link_id && WPDB_PLUGIN_FILE == $file) {
-					$new_links['wpdp-reports']  = sprintf( '<a href="%s">%s</a>', admin_url( 'tools.php?page=wp-downloader-reports' ), esc_html__( 'Reports', 'wp-downloader-plus' ) );
+				if ( 'deactivate' == $link_id && WPDB_PLUGIN_FILE == $file ) {
+					$new_links['wpdp-reports'] = sprintf( '<a href="%s">%s</a>', admin_url( 'tools.php?page=wp-downloader-reports' ), esc_html__( 'Reports', 'wp-downloader-plus' ) );
 				}
 
 				$new_links[ $link_id ] = $link;
@@ -193,7 +193,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		 * @return void
 		 */
 		function downloader_data_table() {
-			add_submenu_page( 'tools.php', 'WP Downloader Plus', 'WP Downloader Plus', 'manage_options', 'wp-downloader-reports', array( $this, 'all_download_list' ), 4 );
+			add_submenu_page( 'tools.php', __( 'WP Downloader Plus', 'wp-downloader-plus' ), __( 'WP Downloader Plus', 'wp-downloader-plus' ), 'manage_options', 'wp-downloader-reports', array( $this, 'all_download_list' ), 4 );
 		}
 
 		/**
@@ -202,6 +202,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		function all_download_list() {
 
 			$report_table = new WPDP_Reports_table();
+			$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( $_REQUEST['page'] ) : '';
 
 			ob_start();
 
@@ -210,8 +211,8 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 			$report_table->prepare_items(); ?>
 
             <form action="" method="get">
-                <input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>"/>
-				<?php $report_table->search_box( __( 'search' ), 'search_id' ); ?>
+                <input type="hidden" name="page" value="<?php echo esc_attr( $current_page ); ?>"/>
+				<?php $report_table->search_box( __( 'Search', 'wp-downloader-plus' ), 'search_id' ); ?>
             </form> <?php
 			$report_table->display();
 
@@ -276,4 +277,3 @@ function pb_sdk_init_wp_downloader_plus() {
 global $wpdp_sdk;
 
 pb_sdk_init_wp_downloader_plus();
-
