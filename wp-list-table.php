@@ -117,8 +117,8 @@ class WPDP_Reports_table extends WP_List_Table {
 
 
 	/**
-     * Column object type
-     *
+	 * Column object type
+	 *
 	 * @param $item
 	 */
 	function column_object_type( $item ) {
@@ -153,7 +153,7 @@ class WPDP_Reports_table extends WP_List_Table {
 		$time     = Utils::get_args_option( 'datetime', $item );
 		$datetime = strtotime( $time );
 		$time     = date( 'jS M y h:i a', $datetime );
-		$datetime = esc_html( human_time_diff( $datetime, current_time( 'U' ) ) ) . ' ago';
+		$datetime = human_time_diff( $datetime, current_time( 'U' ) ) . esc_html__( ' ago', 'wp-downloader-plus' );
 		printf( '<div class="wpdp_time_diff">%s</div>', $datetime );
 		printf( '<div class="wpdp_download_time">%s</div>', $time );
 	}
