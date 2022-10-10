@@ -5,6 +5,7 @@ Contributors: jaedm97,pluginbazar
 	Requires at least: 6.0,2
 	Tested up to: 6.0.2
 	Stable tag: 3.3.1
+	Text Domain: wp-downloader-plus
 	License: GPLv2 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,3 +21,7 @@ WP Downloader Plus is the best plugin for download plugin and themes.Perfect plu
 1. Upload <strong>WP Downloader Plus</strong> to the /wp-content/plugins/ directory.
 2. Activate the plugin through the Plugins menu in WordPress.
 
+== Changelog == 
+
+ = 1.0.0 =  
+ * This is the First version of WP Downloader Plus Plugin.
