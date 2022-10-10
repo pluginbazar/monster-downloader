@@ -10,27 +10,35 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class WPDP_Reports_table extends WP_List_Table {
 
-	private $users_data;
+	/**
+	 * @var array
+	 */
+	private $downloaded_data = array();
 
-	private function get_users_data( $search = "" ) {
+	/**
+	 * Return downloaded data
+	 *
+	 * @param string $search
+	 *
+	 * @return array|object|stdClass[]|null
+	 */
+	private function get_downloaded_data( $search_string = "" ) {
+
 		global $wpdb;
-		$filter = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
-		if ( ! empty( $search )) {
-			return $wpdb->get_results(
-				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE id Like '%{$search}%' OR object_name Like '%{$search}%' OR object_type Like '%{$search}%' OR datetime Like '%{$search}%'",
-				ARRAY_A
-			);
-		} elseif ( $filter !== 'all' ) {
-			return $wpdb->get_results(
-				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type Like '%{$filter}%' ",
-				ARRAY_A
-			);
-		} else {
-			return $wpdb->get_results(
-				"SELECT id,object_name,object_type,downloaded_by,datetime FROM " . WPDB_TABLE_REPORTS,
-				ARRAY_A
-			);
+
+		$filter_type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : '';
+
+		if ( ! empty( $search_string ) ) {
+			$search_string = str_replace( array( ' ', '_' ), '-', strtolower( $search_string ) );
+
+			return $wpdb->get_results( "SELECT * FROM " . WPDB_TABLE_REPORTS . " WHERE object_name Like '%{$search_string}%'", ARRAY_A );
 		}
+
+		if ( ! empty( $filter_type ) ) {
+			return $wpdb->get_results( "SELECT * FROM " . WPDB_TABLE_REPORTS . " WHERE  object_type = '{$filter_type}' ", ARRAY_A );
+		}
+
+		return $wpdb->get_results( "SELECT * FROM " . WPDB_TABLE_REPORTS, ARRAY_A );
 	}
 
 
@@ -55,25 +63,21 @@ class WPDP_Reports_table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
-		if ( isset( $_REQUEST['page'] ) && isset( $_REQUEST['s'] ) ) {
-			$this->users_data = $this->get_users_data( $_REQUEST['s'] );
-		} else {
-			$this->users_data = $this->get_users_data();
-		}
-
-		$columns = $this->get_columns();
-
-		$per_page         = 20;
-		$current_page     = $this->get_pagenum();
-		$count            = count( $this->users_data );
-		$this->users_data = array_slice( $this->users_data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+		$search_string         = isset( $_REQUEST['s'] ) ? sanitize_text_field( $_REQUEST['s'] ) : '';
+		$downloaded_data       = $this->get_downloaded_data( $search_string );
+		$columns               = $this->get_columns();
+		$per_page              = 20;
+		$current_page          = $this->get_pagenum();
+		$count                 = count( $downloaded_data );
+		$this->downloaded_data = array_slice( $downloaded_data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
 		$this->set_pagination_args( array(
 			'total_items' => $count,
 			'per_page'    => $per_page,
 		) );
+
 		$this->_column_headers = array( $columns );
-		$this->items           = $this->users_data;
+		$this->items           = $this->downloaded_data;
 	}
 
 	/**
@@ -111,9 +115,17 @@ class WPDP_Reports_table extends WP_List_Table {
 		printf( '<div class="row-actions visible">%s</div>', implode( ' | ', $row_actions ) );
 	}
 
+
+	/**
+     * Column object type
+     *
+	 * @param $item
+	 */
 	function column_object_type( $item ) {
-		$object      = isset( $item['object_type'] ) ? $item['object_type'] : '';
+
+		$object      = Utils::get_args_option( 'object_type', $item );
 		$object_type = ucfirst( $object );
+
 		printf( '<div><strong>%s</strong></div>', $object_type );
 	}
 
@@ -123,7 +135,8 @@ class WPDP_Reports_table extends WP_List_Table {
 	 * @return void
 	 */
 	function column_downloaded_by( $item ) {
-		$user_id       = isset( $item['downloaded_by'] ) ? $item['downloaded_by'] : '';
+
+		$user_id       = Utils::get_args_option( 'downloaded_by', $item );
 		$downloaded_by = get_user_by( 'id', $user_id );
 
 		printf( '<div><a href="#"><strong>%s</strong></a></div>', $downloaded_by->display_name );
@@ -131,31 +144,42 @@ class WPDP_Reports_table extends WP_List_Table {
 	}
 
 	/**
-	 * @param $time
+	 * @param $item
 	 *
 	 * @return void
 	 */
-	function column_datetime( $time ) {
-		$time     = isset( $time['datetime'] ) ? $time['datetime'] : '';
+	function column_datetime( $item ) {
+
+		$time     = Utils::get_args_option( 'datetime', $item );
 		$datetime = strtotime( $time );
-		$time = date('jS M Y - h:i:s a', $datetime);
+		$time     = date( 'jS M y h:i a', $datetime );
 		$datetime = esc_html( human_time_diff( $datetime, current_time( 'U' ) ) ) . ' ago';
 		printf( '<div class="wpdp_time_diff">%s</div>', $datetime );
-		printf( '<div class="wpdp_download_time">%s</div>',$time );
+		printf( '<div class="wpdp_download_time">%s</div>', $time );
 	}
 
+
+	/**
+	 * Add filter form
+	 *
+	 * @param string $which
+	 */
 	function extra_tablenav( $which ) {
 		if ( $which == "top" ) {
-			$value = isset( $_POST['filter-object-type'] ) ? $_POST['filter-object-type'] : '';
+
+			$filter_type  = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : '';
+			$current_page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+
 			?>
             <div class="alignleft ">
-                <form action="" method="post">
-                    <select name="filter-object-type">
-                        <option value="all" <?php if($value == 'all'){ echo 'selected'; }?>>All</option>
-                        <option value="plugin" <?php if($value == 'plugin'){ echo 'selected'; } ?>><?php echo esc_html__('Plugin','wp-downloader-plus'); ?></option>
-                        <option value="theme" <?php if($value == 'theme'){ echo 'selected'; } ?>><?php echo esc_html__('Theme','wp-downloader-plus'); ?></option>
+                <form action="" method="get">
+                    <select name="type">
+                        <option value=""><?php esc_html_e( 'All', 'wp-downloader-plus' ); ?></option>
+                        <option <?php selected( $filter_type, 'plugin' ); ?> value="plugin"><?php esc_html_e( 'Plugin', 'wp-downloader-plus' ); ?></option>
+                        <option <?php selected( $filter_type, 'theme' ); ?> value="theme"><?php esc_html_e( 'Theme', 'wp-downloader-plus' ); ?></option>
                     </select>
-                    <button class="button" type="submit"><?php echo esc_html__('Filter'); ?></button>
+                    <input type="hidden" name="page" value="<?php echo esc_attr( $current_page ); ?>">
+                    <button class="button" type="submit"><?php echo esc_html__( 'Filter' ); ?></button>
                 </form>
             </div>
 			<?php
