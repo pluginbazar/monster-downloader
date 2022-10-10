@@ -1,7 +1,7 @@
 === WP Downloader Plus - Best WP Plugin and Theme Downloader ===
 Contributors: jaedm97,pluginbazar
 	Donate link: https://pluginbazar.com/
-	Tags: WP Downloader Plus, Plugin Downloader, Theme Downloader, WP Best Theme & Plugin Downloader
+	Tags: WP Downloader Plus, WP Plugin Downloader, WP Theme Downloader, WP Best Theme & Plugin Downloader
 	Requires at least: 6.0,2
 	Tested up to: 6.0.2
 	Stable tag: 3.3.1
