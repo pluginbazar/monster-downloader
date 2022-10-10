@@ -135,7 +135,7 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 		 */
 		function add_plugin_action_links( $links, $file, $plugin_data, $context ) {
 
-			if ( 'dropins' === $context || WPDB_PLUGIN_FILE != $file ) {
+			if ( 'dropins' === $context ) {
 				return $links;
 			}
 
@@ -144,13 +144,14 @@ if ( ! class_exists( 'WPDP_Main' ) ) {
 
 			foreach ( $links as $link_id => $link ) {
 
-				if ( 'deactivate' == $link_id ) {
-					$new_links['wpdp-download'] = sprintf( '<a href="%s">%s</a>', $this->get_object_download_link( $file, $what ), esc_html__( 'Download', 'wp-downloader-plus' ) );
+				if ( 'deactivate' == $link_id && WPDB_PLUGIN_FILE == $file) {
 					$new_links['wpdp-reports']  = sprintf( '<a href="%s">%s</a>', admin_url( 'tools.php?page=wp-downloader-reports' ), esc_html__( 'Reports', 'wp-downloader-plus' ) );
 				}
 
 				$new_links[ $link_id ] = $link;
 			}
+
+			$new_links['wpdp-download'] = sprintf( '<a href="%s">%s</a>', $this->get_object_download_link( $file, $what ), esc_html__( 'Download', 'wp-downloader-plus' ) );
 
 			return $new_links;
 		}
