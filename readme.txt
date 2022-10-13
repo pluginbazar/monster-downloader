@@ -1,16 +1,16 @@
-=== WP Downloader Plus - Best WP Plugin and Theme Downloader ===
-Contributors: jaedm97,pluginbazar
+=== Monster Downloader ===
+Contributors:pluginbazar
 	Donate link: https://pluginbazar.com/
 	Tags: WP Downloader Plus, WP Plugin Downloader, WP Theme Downloader, WP Best Theme & Plugin Downloader
 	Requires at least: 6.0,2
 	Tested up to: 6.0.2
 	Stable tag: 3.3.1
-	Text Domain: wp-downloader-plus
+	Text Domain: monster-downloader
 	License: GPLv2 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
-WP Downloader Plus is the best plugin for download plugin and themes.Perfect plugin for quickly downloading themes and plugins.
+Monster Downloader is the best plugin for download plugin and themes.Perfect plugin for quickly downloading themes and plugins.
 
 ### Features
 * Download the plugin and theme with one click.
@@ -18,10 +18,10 @@ WP Downloader Plus is the best plugin for download plugin and themes.Perfect plu
 
 == Installation ==
 
-1. Upload <strong>WP Downloader Plus</strong> to the /wp-content/plugins/ directory.
+1. Upload <strong>Monster Downloader</strong> to the /wp-content/plugins/ directory.
 2. Activate the plugin through the Plugins menu in WordPress.
 
 == Changelog == 
 
- = 1.0.0 =  
- * This is the First version of WP Downloader Plus Plugin.
+ = 1.0.0 =
+  * 11-10-2022 - NEW - This is the initial release of the plugin.
