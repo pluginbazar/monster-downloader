@@ -65,4 +65,4 @@
         }, 50);
     });
 
-})(jQuery, window, document, wpdp);
+})(jQuery, window, document, monsterDownload);

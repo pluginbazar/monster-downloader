@@ -167,7 +167,7 @@ if ( ! class_exists( 'MONSTER_DOWNLOADER_Main' ) ) {
 		 */
 		public function get_object_download_link( $download_object = '', $object_type = 'plugin' ) {
 			$download_object = empty( $download_object ) ? 'object_name' : $download_object;
-			$download_query  = build_query( array( 'wpdp' => $object_type, 'object' => $download_object ) );
+			$download_query  = build_query( array( 'monster-downloader' => $object_type, 'object' => $download_object ) );
 			$download_link   = wp_nonce_url( admin_url( '?' . $download_query ), 'monster-downloader-download' );
 
 			return apply_filters( 'MONSTER_DOWNLOADER/Filters/get_object_download_link', $download_link, $download_object, $object_type );
@@ -179,7 +179,7 @@ if ( ! class_exists( 'MONSTER_DOWNLOADER_Main' ) ) {
 		function admin_scripts() {
 
 			wp_enqueue_script( 'monster-downloader-admin', plugins_url( '/assets/admin/js/scripts.js', __FILE__ ), array( 'jquery' ), self::$_script_version, true );
-			wp_localize_script( 'monster-downloader-admin', 'monster-downloader', array(
+			wp_localize_script( 'monster-downloader-admin', 'monsterDownload', array(
 				'ajaxUrl'           => admin_url( 'admin-ajax.php' ),
 				'themeDownloadText' => esc_html__( 'Download','monster-downloader' ),
 				'themeDownloadLink' => $this->get_object_download_link( '', 'theme' ),
