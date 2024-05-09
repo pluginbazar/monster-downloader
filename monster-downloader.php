@@ -3,7 +3,7 @@
 	Plugin Name: Monster Downloader
 	Plugin URI: https://pluginbazar.com/
 	Description: This plugin for download WordPress plugin and theme.
-	Version: 1.0.0
+	Version: 1.0.2
 	Author: Pluginbazar
 	Text Domain: monster-downloader
 	Author URI: https://pluginbazar.com/
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 defined( 'MONSTER_DOWNLOADER_PLUGIN_URL' ) || define( 'MONSTER_DOWNLOADER_PLUGIN_URL', WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/' );
 defined( 'MONSTER_DOWNLOADER_PLUGIN_DIR' ) || define( 'MONSTER_DOWNLOADER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 defined( 'MONSTER_DOWNLOADER_PLUGIN_FILE' ) || define( 'MONSTER_DOWNLOADER_PLUGIN_FILE', plugin_basename( __FILE__ ) );
-defined( 'MONSTER_DOWNLOADER_PLUGIN_VERSION' ) || define( 'MONSTER_DOWNLOADER_PLUGIN_VERSION', '1.0.0' );
+defined( 'MONSTER_DOWNLOADER_PLUGIN_VERSION' ) || define( 'MONSTER_DOWNLOADER_PLUGIN_VERSION', '1.0.2' );
 defined( 'MONSTER_DOWNLOADER_TABLE_REPORTS' ) || define( 'MONSTER_DOWNLOADER_TABLE_REPORTS', sprintf( '%smonster_downloader_reports', $wpdb->prefix ) );
 
 if ( ! class_exists( 'MONSTER_DOWNLOADER_Main' ) ) {
